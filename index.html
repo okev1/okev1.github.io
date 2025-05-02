@@ -1,64 +1,65 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="win95">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kevin Olencz</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome.exe</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
 </head>
 <body>
-
-  <div id="landing" class="window center-screen active">
-    <div class="title-bar">
-      <div class="title-bar-text">Welcome.exe</div>
-    </div>
+  <!-- Welcome screen -->
+  <div id="welcome-screen" class="window center">
+    <div class="title-bar">Welcome.exe</div>
     <div class="window-body">
-      <p>Welcome<br><strong>Click anywhere</strong> or press any key to enter.</p>
+      <p>Welcome</p>
+      <p><strong>Click anywhere</strong> or press any key to enter.</p>
     </div>
   </div>
 
-  <div id="main" class="hidden">
-    <div class="window">
-      <div class="title-bar">
-        <div class="title-bar-text">About.txt</div>
-      </div>
+  <!-- Desktop area -->
+  <div id="desktop" hidden>
+    <div class="window draggable" id="about-window" style="top:60px;left:calc(50% - 250px);">
+      <div class="title-bar">About.txt</div>
       <div class="window-body">
-        <p>I'm a Full Stack Software Engineer with a passion for clean design, secure systems, and user-focused development. I build fast, scalable, and maintainable web applications using modern technologies.</p>
+        <p>I'm a Full Stack Software Engineer with a passion for clean design, secure systems, and user‑focused development. I build fast, scalable, and maintainable web applications using modern technologies.</p>
       </div>
     </div>
 
-    <div class="window">
-      <div class="title-bar">
-        <div class="title-bar-text">Projects.txt</div>
-      </div>
+    <div class="window draggable" id="projects-window" style="top:280px;left:calc(50% - 250px);" hidden>
+      <div class="title-bar">Projects.txt</div>
       <div class="window-body">
         <ul>
-          <li><strong>Project Alpha:</strong> Full-stack e-commerce platform (coming soon)</li>
-          <li><strong>Project Beta:</strong> AI assistant for developer workflows (coming soon)</li>
+          <li><strong>Project Alpha:</strong> Full‑stack e‑commerce platform – <em>live demo coming soon</em></li>
+          <li><strong>Project Beta:</strong> AI assistant for developer workflows – <em>demo coming soon</em></li>
           <li><strong>Hardware Experiments:</strong> PC builds and embedded tinkering (personal projects)</li>
         </ul>
       </div>
     </div>
 
-    <div class="window">
-      <div class="title-bar">
-        <div class="title-bar-text">Resume.txt</div>
-      </div>
+    <div class="window draggable" id="resume-window" style="top:500px;left:calc(50% - 250px);" hidden>
+      <div class="title-bar">Resume.txt</div>
       <div class="window-body">
-        <a href="placeholder_resume.pdf" class="download-link" download>Download My Resume (PDF)</a>
+        <p><a href="Resume.pdf" target="_blank">Download My Resume (PDF)</a></p>
       </div>
     </div>
 
-    <div class="window">
-      <div class="title-bar">
-        <div class="title-bar-text">Contact.txt</div>
-      </div>
+    <div class="window draggable" id="contact-window" style="top:620px;left:calc(50% - 250px);" hidden>
+      <div class="title-bar">Contact.txt</div>
       <div class="window-body">
-        <a href="mailto:olenczk@gmail.com">Email Me</a>
+        <p><a href="mailto:your.email@example.com">Email Me</a></p>
       </div>
     </div>
   </div>
 
-<script src="script.js"></script>
+  <!-- Faux DOS prompt -->
+  <div id="console" hidden>
+    <span>&gt;</span><input id="console-input" autocomplete="off" />
+  </div>
+
+  <!-- Theme toggle -->
+  <button id="theme-toggle" title="Toggle Theme">Theme</button>
 </body>
 </html>
