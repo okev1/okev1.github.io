@@ -1,0 +1,115 @@
+
+/* Apply default cursor (arrow.cur) globally */
+* {
+  cursor: url('cursor.cur'), auto;
+}
+
+/* Change cursor to hand.cur only on link hover */
+a:hover {
+  cursor: url('hand.cur'), pointer;
+}
+
+
+*,
+*::before,
+*::after,
+a,
+button,
+input,
+textarea,
+select,
+label,
+div,
+span,
+p {
+    cursor: url('cursor.cur'), auto !important;
+}
+
+
+body {
+    cursor: url('cursor.cur'), auto;
+}
+
+* {
+  cursor: url('arrow.cur'), auto;
+}
+
+body {
+  margin: 0;
+  font-family: "MS Sans Serif", Tahoma, sans-serif;
+  background-color: #008080;
+  color: black;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.center-screen {
+  position: absolute;
+  top: 37%;
+  left: 50%;
+  transform: translate(-50%, -37%);
+}
+
+.window {
+  background: #c0c0c0;
+  border: 2px solid #000;
+  width: 90%;
+  max-width: 600px;
+  margin: 20px auto;
+  box-shadow: 4px 4px #000;
+}
+
+.title-bar {
+  background: navy;
+  color: white;
+  padding: 4px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.window-body {
+  padding: 10px;
+  background-color: #efefef;
+}
+
+.hidden {
+  display: none;
+}
+
+a.download-link {
+  color: blue;
+  text-decoration: underline;
+}
+
+a {
+  color: blue;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+@media (max-width: 600px) {
+  .window {
+    width: 95%;
+    font-size: 16px;
+  }
+
+  .title-bar-text {
+    font-size: 16px;
+  }
+
+  body {
+    font-size: 16px;
+  }
+
+  a, .download-link {
+    font-size: 16px;
+  }
+}
+
+
+input, textarea, button, a {
+    cursor: url('cursor.cur'), auto;
+}
