@@ -1,49 +1,64 @@
 
 (() => {
-  const welcome = document.getElementById('welcome-screen');
-  const desktop = document.getElementById('desktop');
-  const consoleDiv = document.getElementById('console');
-  const consoleInput = document.getElementById('console-input');
-  const themeToggle = document.getElementById('theme-toggle');
+  const qs = sel => document.querySelector(sel);
+  const welcome = qs('#welcome-screen');
+  const desktop = qs('#desktop');
+  const consoleDiv = qs('#console');
+  const consoleInput = qs('#console-input');
+  const themeToggle = qs('#theme-toggle');
+
   const files = [
     { name: 'about.txt', win: 'about-window' },
     { name: 'projects.txt', win: 'projects-window' },
     { name: 'resume.txt', win: 'resume-window' },
     { name: 'contact.txt', win: 'contact-window' }
   ];
-  // Helper to show desktop
+
+  /* ---------- bootstrap ---------- */
   function enterSite() {
     welcome.hidden = true;
     desktop.hidden = false;
     consoleDiv.hidden = false;
+    consoleInput.focus();
+    printToConsole('Type "help" and press Enter for commands.');
   }
-  // Welcome screen interactions
   document.addEventListener('click', enterSite, { once: true });
   document.addEventListener('keydown', enterSite, { once: true });
 
-  // DOS prompt behaviour
+  /* ---------- console ---------- */
   consoleInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      const cmd = consoleInput.value.trim().toLowerCase();
-      consoleInput.value = '';
-      if (cmd === 'dir') {
-        listFiles();
-      } else if (files.some(f => f.name === cmd)) {
-        openWindow(cmd);
-      } else {
-        // Unknown command - just ignore
-      }
+    if (e.key !== 'Enter') return;
+    const cmd = consoleInput.value.trim().toLowerCase();
+    consoleInput.value = '';
+    if (!cmd) return;
+    if (cmd === 'dir') {
+      listFiles();
+    } else if (cmd === 'help') {
+      showHelp();
+    } else if (files.some(f => f.name === cmd)) {
+      openWindow(cmd);
+    } else {
+      printToConsole('Unrecognized command. Type "help" for list.');
     }
   });
 
+  function printToConsole(text) {
+    const line = document.createElement('div');
+    line.textContent = text;
+    consoleDiv.insertBefore(line, consoleInput.parentNode);
+    // keep last 6 lines
+    [...consoleDiv.querySelectorAll('div')].slice(0,-6).forEach(n=>n.remove());
+  }
+
   function listFiles() {
-    // Output the list visually by adding a temporary line above input
-    let list = document.createElement('div');
-    list.textContent = files.map(f => f.name).join('    ');
-    list.style.whiteSpace = 'pre';
-    consoleDiv.insertBefore(list, consoleInput.parentNode);
-    // auto remove after 5s
-    setTimeout(() => list.remove(), 5000);
+    printToConsole(files.map(f => f.name).join('    '));
+  }
+
+  function showHelp() {
+    printToConsole('Available commands:');
+    printToConsole('dir               list files');
+    printToConsole('<filename>        open file window');
+    printToConsole('help              show this message');
   }
 
   function openWindow(fname) {
@@ -52,34 +67,37 @@
     const win = document.getElementById(match.win);
     if (win) {
       win.hidden = false;
-      win.style.zIndex = Date.now(); // bring to front
+      bringToFront(win);
     }
   }
 
-  // Draggable windows
-  const draggable = document.querySelectorAll('.draggable');
-  draggable.forEach(win => {
-    const bar = win.querySelector('.title-bar');
-    let offsetX = 0, offsetY = 0;
-    bar.addEventListener('pointerdown', (e) => {
-      offsetX = e.clientX - win.offsetLeft;
-      offsetY = e.clientY - win.offsetTop;
-      win.setPointerCapture(e.pointerId);
-      win.style.zIndex = Date.now();
-      function move(ev) {
-        win.style.left = (ev.clientX - offsetX) + 'px';
-        win.style.top = (ev.clientY - offsetY) + 'px';
-      }
-      function up(ev) {
-        win.removeEventListener('pointermove', move);
-        win.removeEventListener('pointerup', up);
-      }
-      win.addEventListener('pointermove', move);
-      win.addEventListener('pointerup', up);
-    });
+  /* ---------- draggable windows (delegated) ---------- */
+  let dragTarget = null, offsetX=0, offsetY=0;
+
+  function bringToFront(win) {
+    win.style.zIndex = Date.now();
+  }
+
+  document.addEventListener('pointerdown', (e) => {
+    const bar = e.target.closest('.title-bar');
+    if (!bar) return;
+    const win = bar.closest('.window');
+    dragTarget = win;
+    bringToFront(win);
+    offsetX = e.clientX - win.offsetLeft;
+    offsetY = e.clientY - win.offsetTop;
+    win.setPointerCapture(e.pointerId);
   });
 
-  // Theme handling
+  document.addEventListener('pointermove', (e) => {
+    if (!dragTarget) return;
+    dragTarget.style.left = (e.clientX - offsetX) + 'px';
+    dragTarget.style.top  = (e.clientY - offsetY) + 'px';
+  });
+
+  document.addEventListener('pointerup', () => { dragTarget = null; });
+
+  /* ---------- theme ---------- */
   function setTheme(next) {
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
@@ -92,7 +110,7 @@
     setTheme(current === 'win95' ? 'win98' : 'win95');
   });
 
-  // PWA install banner
+  /* ---------- PWA install ---------- */
   let deferredPrompt;
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
@@ -102,23 +120,23 @@
 
   function showInstallBanner() {
     const banner = document.createElement('div');
-    banner.className = 'window';
-    banner.style.width = '250px';
+    banner.className = 'window draggable';
+    banner.style.width = '260px';
+    banner.style.position = 'fixed';
     banner.style.bottom = '16px';
     banner.style.left = '16px';
-    banner.style.position = 'fixed';
     banner.innerHTML = '<div class="title-bar">Install?</div><div class="window-body"><p>Install this site as an app for offline access.</p><button id="install-btn">Install</button></div>';
     document.body.appendChild(banner);
+
     banner.querySelector('#install-btn').addEventListener('click', async () => {
       banner.remove();
       deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log('PWA install', outcome);
+      await deferredPrompt.userChoice;
       deferredPrompt = null;
     });
   }
 
-  // Service worker registration
+  /* ---------- service worker ---------- */
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').catch(console.error);
   }

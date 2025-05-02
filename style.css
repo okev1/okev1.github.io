@@ -93,3 +93,10 @@ html, body {
     transform: none !important;
   }
 }
+
+
+#console div {
+  line-height: 1.2;
+}
+
+/* install banner default hidden by z-index stack fix until shows */
